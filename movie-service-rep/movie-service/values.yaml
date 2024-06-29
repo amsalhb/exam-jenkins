@@ -1,0 +1,14 @@
+replicaCount: 1
+
+image:
+  repository: asmalhb/movie-service
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8000
+
+env:
+  databaseUri: "postgresql://movie_db_username:movie_db_password@movie_db/movie_db_dev"
+  castServiceHostUrl: "http://cast_service:8000/api/v1/casts/"

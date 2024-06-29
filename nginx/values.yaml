@@ -1,0 +1,14 @@
+replicaCount: 1
+image:
+  repository: nginx
+  tag: latest
+service:
+  type: NodePort
+  port: 8080
+  nodePort: 32525
+ingress:
+  enabled: false
+resources: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}

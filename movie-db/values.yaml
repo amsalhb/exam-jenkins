@@ -1,0 +1,17 @@
+replicaCount: 1
+
+image:
+  repository: postgres
+  tag: "12.1-alpine"
+
+service:
+  type: ClusterIP
+  port: 5432
+
+persistence:
+  enabled: true
+  accessModes:
+    - ReadWriteOnce
+  size: 1Gi
+
+secretName: movie-db-secret
