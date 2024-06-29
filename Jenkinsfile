@@ -201,10 +201,13 @@ stages {
         }
 
         stage('Deploy Movie Service to Prod') {
-            timeout(time: 15, unit: "MINUTES") {
+            steps {
+            // Create an Approval Button with a timeout of 15minutes.
+            // this require a manuel validation in order to deploy on production environment
+                    timeout(time: 15, unit: "MINUTES") {
                         input message: 'Do you want to deploy in production ?', ok: 'Yes'
                     }
-            steps {
+
                 dir('movie-service-rep') {
                     // Copie des valeurs et mise à jour du tag Docker
                     sh '''
@@ -218,10 +221,13 @@ stages {
         }
 
         stage('Deploy Cast Service to Prod') {
-            timeout(time: 15, unit: "MINUTES") {
+            steps {
+            // Create an Approval Button with a timeout of 15minutes.
+            // this require a manuel validation in order to deploy on production environment
+                    timeout(time: 15, unit: "MINUTES") {
                         input message: 'Do you want to deploy in production ?', ok: 'Yes'
                     }
-            steps {
+
                 dir('cast-service-rep') {
                     // Copie des valeurs et mise à jour du tag Docker
                     sh '''
@@ -235,10 +241,13 @@ stages {
         }
 
         stage('Deploy dbs and nginx to Prod') {
-            timeout(time: 15, unit: "MINUTES") {
+            steps {
+            // Create an Approval Button with a timeout of 15minutes.
+            // this require a manuel validation in order to deploy on production environment
+                    timeout(time: 15, unit: "MINUTES") {
                         input message: 'Do you want to deploy in production ?', ok: 'Yes'
                     }
-            steps {
+
                 script {
                     sh '''
                     helm upgrade --install movie-db ./movie-db --values ./movie-db/values.yaml --namespace prod
