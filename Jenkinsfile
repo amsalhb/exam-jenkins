@@ -40,8 +40,8 @@ stages {
             steps {
                 script {
                     // Test curl command to validate container response
-                    sh "curl -sS localhost:8001/api/v1/movies"
-                    sh "curl -sS localhost:8002/api/v1/casts"
+                    sh "curl -sS 3.249.174.60:8001/api/v1/movies"
+                    sh "curl -sS 3.249.174.60:8002/api/v1/casts"
                 }
             }
         }
