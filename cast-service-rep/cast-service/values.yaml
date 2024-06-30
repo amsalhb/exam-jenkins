@@ -10,4 +10,4 @@ service:
   port: 8000
 
 env:
-  databaseUri: "postgresql://cast_db_username:cast_db_password@cast_db/cast_db_dev"
+  databaseUri: "postgresql://cast_db_username:cast_db_password@cast-db/cast_db_dev"

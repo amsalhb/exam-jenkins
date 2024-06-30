@@ -10,5 +10,5 @@ service:
   port: 8000
 
 env:
-  databaseUri: "postgresql://movie_db_username:movie_db_password@movie_db/movie_db_dev"
+  databaseUri: "postgresql://movie_db_username:movie_db_password@movie-db/movie_db_dev"
   castServiceHostUrl: "http://cast_service:8000/api/v1/casts/"

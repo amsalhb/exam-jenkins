@@ -7,6 +7,66 @@ DOCKER_TAG = "v.${BUILD_ID}.0" // we will tag our images with the current build 
 }
 agent any 
 stages {
+        stage('Prepare Environment') {
+            environment
+            {
+                KUBECONFIG = credentials("config") // we retrieve  kubeconfig from secret file called config saved on jenkins
+            }
+            steps {
+                script {
+                    // Crée le répertoire .kube et copie le fichier kubeconfig
+                    sh '''
+                    rm -Rf .kube
+                    mkdir .kube
+                    cat $KUBECONFIG > .kube/config
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy dbs to Dev') {
+            steps {
+                script {
+                    sh '''
+                    helm upgrade --install movie-db ./movie-db --values ./movie-db/values.yaml --namespace dev
+                    helm upgrade --install cast-db ./cast-db --values ./cast-db/values.yaml --namespace dev
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy dbs to Staging') {
+            steps {
+                script {
+                    sh '''
+                    helm upgrade --install movie-db ./movie-db --values ./movie-db/values.yaml --namespace staging
+                    helm upgrade --install cast-db ./cast-db --values ./cast-db/values.yaml --namespace staging
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy dbs to QA') {
+            steps {
+                script {
+                    sh '''
+                    helm upgrade --install movie-db ./movie-db --values ./movie-db/values.yaml --namespace qa
+                    helm upgrade --install cast-db ./cast-db --values ./cast-db/values.yaml --namespace qa
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy dbs to Prod') {
+            steps {
+                script {
+                    sh '''
+                    helm upgrade --install movie-db ./movie-db --values ./movie-db/values.yaml --namespace prod
+                    helm upgrade --install cast-db ./cast-db --values ./cast-db/values.yaml --namespace prod
+                    '''
+                }
+            }
+        }
         stage(' Docker Build'){ // docker build image stage
             steps {
                 script {
@@ -72,22 +132,6 @@ stages {
             }
 
         }
-        stage('Prepare Environment') {
-            environment
-            {
-                KUBECONFIG = credentials("config") // we retrieve  kubeconfig from secret file called config saved on jenkins
-            }
-            steps {
-                script {
-                    // Crée le répertoire .kube et copie le fichier kubeconfig
-                    sh '''
-                    rm -Rf .kube
-                    mkdir .kube
-                    cat $KUBECONFIG > .kube/config
-                    '''
-                }
-            }
-        }
 
         stage('Deploy Movie Service to Dev') {
             steps {
@@ -117,12 +161,10 @@ stages {
             }
         }
 
-        stage('Deploy dbs and nginx to Dev') {
+        stage('Deploy nginx to Dev') {
             steps {
                 script {
                     sh '''
-                    helm upgrade --install movie-db ./movie-db --values ./movie-db/values.yaml --namespace dev
-                    helm upgrade --install cast-db ./cast-db --values ./cast-db/values.yaml --namespace dev
                     helm upgrade --install nginx ./nginx --values ./nginx/values.yaml --namespace dev
                     '''
                 }
@@ -157,12 +199,10 @@ stages {
             }
         }
 
-        stage('Deploy dbs and nginx to Staging') {
+        stage('Deploy nginx to Staging') {
             steps {
                 script {
                     sh '''
-                    helm upgrade --install movie-db ./movie-db --values ./movie-db/values.yaml --namespace staging
-                    helm upgrade --install cast-db ./cast-db --values ./cast-db/values.yaml --namespace staging
                     helm upgrade --install nginx ./nginx --values ./nginx/values.yaml --namespace staging
                     '''
                 }
@@ -197,12 +237,10 @@ stages {
             }
         }
 
-        stage('Deploy dbs and nginx to QA') {
+        stage('Deploy nginx to QA') {
             steps {
                 script {
                     sh '''
-                    helm upgrade --install movie-db ./movie-db --values ./movie-db/values.yaml --namespace qa
-                    helm upgrade --install cast-db ./cast-db --values ./cast-db/values.yaml --namespace qa
                     helm upgrade --install nginx ./nginx --values ./nginx/values.yaml --namespace qa
                     '''
                 }
@@ -249,7 +287,7 @@ stages {
             }
         }
 
-        stage('Deploy dbs and nginx to Prod') {
+        stage('Deploy nginx to Prod') {
             steps {
             // Create an Approval Button with a timeout of 15minutes.
             // this require a manuel validation in order to deploy on production environment
@@ -259,8 +297,6 @@ stages {
 
                 script {
                     sh '''
-                    helm upgrade --install movie-db ./movie-db --values ./movie-db/values.yaml --namespace prod
-                    helm upgrade --install cast-db ./cast-db --values ./cast-db/values.yaml --namespace prod
                     helm upgrade --install nginx ./nginx --values ./nginx/values.yaml --namespace prod
                     '''
                 }
