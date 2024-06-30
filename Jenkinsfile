@@ -27,6 +27,11 @@ stages {
 	stage('Docker run') {
             steps {
                 script {
+                    // Supprime les conteneurs existants s'ils existent
+                    sh '''
+                        docker rm -f movie-service || true
+                        docker rm -f cast-service || true
+                    '''
                     // Run container for movie-service
                     sh "docker run -d -p 8001:8000 --name movie-service ${DOCKER_ID}/${DOCKER_IMAGE1}:${DOCKER_TAG}"
                     
