@@ -26,7 +26,14 @@ stages {
             }
         }
 
-        stage('Deploy dbs to Dev') {
+        stage('Debug KUBECONFIG') {
+           steps {
+              script {
+                 echo "${KUBECONFIG}"
+              }
+           }
+        }
+       stage('Deploy dbs to Dev') {
             steps {
                 script {
                     sh '''
