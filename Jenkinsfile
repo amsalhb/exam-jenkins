@@ -16,10 +16,10 @@ stages {
                 script {
                     // Crée le répertoire .kube et copie le fichier kubeconfig
                     sh '''
-                    rm -Rf ~/.kube
-                    mkdir -p ~/.kube
-                    echo "$KUBECONFIG" > ~/.kube/config
-                    chmod 600 ~/.kube/config
+                    rm -Rf /var/lib/jenkins/.kube
+                    mkdir -p /var/lib/jenkins/.kube
+                    echo "$KUBECONFIG" > /var/lib/jenkins/.kube/config
+                    chmod 644  /var/lib/jenkins/.kube/config
                     kubectl get nodes
                     '''  
                 }
