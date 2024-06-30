@@ -32,11 +32,15 @@ stages {
                         docker rm -f movie-service || true
                         docker rm -f cast-service || true
                     '''
-                    // Run container for movie-service
-                    sh "docker run -d -p 8001:8000 --name movie-service ${DOCKER_ID}/${DOCKER_IMAGE1}:${DOCKER_TAG}"
-                    
+                    sh '''
+                        docker run -d -p 8001:8000 --name movie-service ${DOCKER_ID}/${DOCKER_IMAGE1}:${DOCKER_TAG}
+                        docker logs -f movie-service &
+                    '''
                     // Run container for cast-service
-                    sh "docker run -d -p 8002:8000 --name cast-service ${DOCKER_ID}/${DOCKER_IMAGE2}:${DOCKER_TAG}"
+                    sh '''
+                        docker run -d -p 8002:8000 --name cast-service ${DOCKER_ID}/${DOCKER_IMAGE2}:${DOCKER_TAG}
+                        docker logs -f cast-service &
+                    '''
                 }
             }
         }
