@@ -21,18 +21,12 @@ stages {
                     echo "$KUBECONFIG" > ~/.kube/config
                     chmod 644  ~/.kube/config
                     kubectl get nodes
+                    cat ~/.kube/config
                     '''  
                 }
             }
         }
 
-        stage('Debug KUBECONFIG') {
-           steps {
-              script {
-                 echo "${KUBECONFIG}"
-              }
-           }
-        }
        stage('Deploy dbs to Dev') {
             steps {
                 script {
