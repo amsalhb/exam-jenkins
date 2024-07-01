@@ -16,21 +16,30 @@ stages {
                 script {
                     // Crée le répertoire .kube et copie le fichier kubeconfig
                     sh '''
-                    rm -Rf ~/.kube
-                    mkdir -p ~/.kube
-                    echo "$KUBECONFIG" > ~/.kube/config
-                    chmod 644  ~/.kube/config
+                    rm -Rf .kube
+                    mkdir -p .kube
+                    ls
+                    cat $KUBECONFIG > .kube/config
+                    chmod 644  .kube/config
                     kubectl get nodes
-                    cat ~/.kube/config
+                    cat .kube/config
                     '''  
                 }
             }
         }
 
        stage('Deploy dbs to Dev') {
+            environment
+            {
+                KUBECONFIG = credentials("config") // we retrieve  kubeconfig from secret file called config saved on jenkins
+            }
             steps {
                 script {
                     sh '''
+	            rm -Rf .kube
+                    mkdir .kube
+                    ls
+                    cat $KUBECONFIG > .kube/config
                     helm upgrade --install movie-db ./movie-db --values ./movie-db/values.yaml --namespace dev
                     helm upgrade --install cast-db ./cast-db --values ./cast-db/values.yaml --namespace dev
                     '''
@@ -39,9 +48,17 @@ stages {
         }
 
         stage('Deploy dbs to Staging') {
+            environment
+            {
+                KUBECONFIG = credentials("config") // we retrieve  kubeconfig from secret file called config saved on jenkins
+            }
             steps {
                 script {
                     sh '''
+                    rm -Rf .kube
+                    mkdir .kube
+                    ls
+                    cat $KUBECONFIG > .kube/config
                     helm upgrade --install movie-db ./movie-db --values ./movie-db/values.yaml --namespace staging
                     helm upgrade --install cast-db ./cast-db --values ./cast-db/values.yaml --namespace staging
                     '''
@@ -50,9 +67,17 @@ stages {
         }
 
         stage('Deploy dbs to QA') {
+            environment
+            {
+                KUBECONFIG = credentials("config") // we retrieve  kubeconfig from secret file called config saved on jenkins
+            }
             steps {
                 script {
                     sh '''
+                    rm -Rf .kube
+                    mkdir .kube
+                    ls
+                    cat $KUBECONFIG > .kube/config
                     helm upgrade --install movie-db ./movie-db --values ./movie-db/values.yaml --namespace qa
                     helm upgrade --install cast-db ./cast-db --values ./cast-db/values.yaml --namespace qa
                     '''
@@ -61,9 +86,17 @@ stages {
         }
 
         stage('Deploy dbs to Prod') {
+            environment
+            {
+                KUBECONFIG = credentials("config") // we retrieve  kubeconfig from secret file called config saved on jenkins
+            }
             steps {
                 script {
                     sh '''
+                    rm -Rf .kube
+                    mkdir .kube
+                    ls
+                    cat $KUBECONFIG > .kube/config
                     helm upgrade --install movie-db ./movie-db --values ./movie-db/values.yaml --namespace prod
                     helm upgrade --install cast-db ./cast-db --values ./cast-db/values.yaml --namespace prod
                     '''
