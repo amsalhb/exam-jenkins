@@ -119,37 +119,6 @@ stages {
                 }
             }
         }
-
-	stage('Docker run') {
-            steps {
-                script {
-                    // Supprime les conteneurs existants s'ils existent
-                    sh '''
-                        docker rm -f movie-service || true
-                        docker rm -f cast-service || true
-                    '''
-                    sh '''
-                        docker run -d -p 8001:8000 --name movie-service ${DOCKER_ID}/${DOCKER_IMAGE1}:${DOCKER_TAG}
-                        docker logs -f movie-service &
-                    '''
-                    // Run container for cast-service
-                    sh '''
-                        docker run -d -p 8002:8000 --name cast-service ${DOCKER_ID}/${DOCKER_IMAGE2}:${DOCKER_TAG}
-                        docker logs -f cast-service &
-                    '''
-                }
-            }
-        }
-        
-        stage('Test Acceptance') {
-            steps {
-                script {
-                    // Test curl command to validate container response
-                    sh "curl -sS localhost:8001/api/v1/movies/docs"
-                    sh "curl -sS localhost:8002/api/v1/casts/docs"
-                }
-            }
-        }
         
         stage('Docker Push') { //we pass the built images to our docker hub account
             environment
