@@ -7,27 +7,6 @@ DOCKER_TAG = "v.${BUILD_ID}.0" // we will tag our images with the current build 
 }
 agent any 
 stages {
-        stage('Prepare Environment') {
-            environment
-            {
-                KUBECONFIG = credentials("config") // we retrieve  kubeconfig from secret file called config saved on jenkins
-            }
-            steps {
-                script {
-                    // Crée le répertoire .kube et copie le fichier kubeconfig
-                    sh '''
-                    rm -Rf .kube
-                    mkdir -p .kube
-                    ls
-                    cat $KUBECONFIG > .kube/config
-                    chmod 644  .kube/config
-                    kubectl get nodes
-                    cat .kube/config
-                    '''  
-                }
-            }
-        }
-
        stage('Deploy dbs to Dev') {
             environment
             {
