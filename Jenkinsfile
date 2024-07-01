@@ -145,8 +145,8 @@ stages {
             steps {
                 script {
                     // Test curl command to validate container response
-                    sh "curl -sS 3.249.174.60:8001/api/v1/movies"
-                    sh "curl -sS 3.249.174.60:8002/api/v1/casts"
+                    sh "curl -sS localhost:8001/api/v1/movies"
+                    sh "curl -sS localhost:8002/api/v1/casts"
                 }
             }
         }
@@ -170,10 +170,18 @@ stages {
         }
 
         stage('Deploy Movie Service to Dev') {
+            environment
+            {
+                KUBECONFIG = credentials("config") // we retrieve  kubeconfig from secret file called config saved on jenkins
+            }
             steps {
                 dir('movie-service-rep') {
                     // Copie des valeurs et mise à jour du tag Docker
                     sh '''
+                    rm -Rf .kube
+                    mkdir .kube
+                    ls
+                    cat $KUBECONFIG > .kube/config
                     cp ./movie-service/values.yaml values.yml
                     cat values.yml
                     sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
@@ -184,10 +192,18 @@ stages {
         }
 
         stage('Deploy Cast Service to Dev') {
+            environment
+            {
+                KUBECONFIG = credentials("config") // we retrieve  kubeconfig from secret file called config saved on jenkins
+            }
             steps {
                 dir('cast-service-rep') {
                     // Copie des valeurs et mise à jour du tag Docker
                     sh '''
+                    rm -Rf .kube
+                    mkdir .kube
+                    ls
+                    cat $KUBECONFIG > .kube/config
                     cp ./cast-service/values.yaml values.yml
                     cat values.yml
                     sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
@@ -198,9 +214,17 @@ stages {
         }
 
         stage('Deploy nginx to Dev') {
+            environment
+            {
+                KUBECONFIG = credentials("config") // we retrieve  kubeconfig from secret file called config saved on jenkins
+            }
             steps {
                 script {
                     sh '''
+                    rm -Rf .kube
+                    mkdir .kube
+                    ls
+                    cat $KUBECONFIG > .kube/config
                     helm upgrade --install nginx ./nginx --values ./nginx/values.yaml --namespace dev
                     '''
                 }
@@ -208,10 +232,18 @@ stages {
         }
         
         stage('Deploy Movie Service to Staging') {
+            environment
+            {
+                KUBECONFIG = credentials("config") // we retrieve  kubeconfig from secret file called config saved on jenkins
+            }
             steps {
                 dir('movie-service-rep') {
                     // Copie des valeurs et mise à jour du tag Docker
                     sh '''
+                    rm -Rf .kube
+                    mkdir .kube
+                    ls
+                    cat $KUBECONFIG > .kube/config
                     cp ./movie-service/values.yaml values.yml
                     cat values.yml
                     sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
@@ -222,10 +254,18 @@ stages {
         }
 
 	stage('Deploy Cast Service to Staging') {
+            environment
+            {
+                KUBECONFIG = credentials("config") // we retrieve  kubeconfig from secret file called config saved on jenkins
+            }
             steps {
                 dir('cast-service-rep') {
                     // Copie des valeurs et mise à jour du tag Docker
                     sh '''
+                    rm -Rf .kube
+                    mkdir .kube
+                    ls
+                    cat $KUBECONFIG > .kube/config
                     cp ./cast-service/values.yaml values.yml
                     cat values.yml
                     sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
@@ -236,9 +276,17 @@ stages {
         }
 
         stage('Deploy nginx to Staging') {
+            environment
+            {
+                KUBECONFIG = credentials("config") // we retrieve  kubeconfig from secret file called config saved on jenkins
+            }
             steps {
                 script {
                     sh '''
+                    rm -Rf .kube
+                    mkdir .kube
+                    ls
+                    cat $KUBECONFIG > .kube/config
                     helm upgrade --install nginx ./nginx --values ./nginx/values.yaml --namespace staging
                     '''
                 }
@@ -246,10 +294,18 @@ stages {
         }
 
         stage('Deploy Movie Service to QA') {
+            environment
+            {
+                KUBECONFIG = credentials("config") // we retrieve  kubeconfig from secret file called config saved on jenkins
+            }
             steps {
                 dir('movie-service-rep') {
                     // Copie des valeurs et mise à jour du tag Docker
                     sh '''
+                    rm -Rf .kube
+                    mkdir .kube
+                    ls
+                    cat $KUBECONFIG > .kube/config
                     cp ./movie-service/values.yaml values.yml
                     cat values.yml
                     sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
@@ -260,10 +316,18 @@ stages {
         }
 
         stage('Deploy Cast Service to QA') {
+            environment
+            {
+                KUBECONFIG = credentials("config") // we retrieve  kubeconfig from secret file called config saved on jenkins
+            }
             steps {
                 dir('cast-service-rep') {
                     // Copie des valeurs et mise à jour du tag Docker
                     sh '''
+                    rm -Rf .kube
+                    mkdir .kube
+                    ls
+                    cat $KUBECONFIG > .kube/config
                     cp ./cast-service/values.yaml values.yml
                     cat values.yml
                     sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
@@ -274,9 +338,17 @@ stages {
         }
 
         stage('Deploy nginx to QA') {
+            environment
+            {
+                KUBECONFIG = credentials("config") // we retrieve  kubeconfig from secret file called config saved on jenkins
+            }
             steps {
                 script {
                     sh '''
+                    rm -Rf .kube
+                    mkdir .kube
+                    ls
+                    cat $KUBECONFIG > .kube/config
                     helm upgrade --install nginx ./nginx --values ./nginx/values.yaml --namespace qa
                     '''
                 }
@@ -284,6 +356,10 @@ stages {
         }
 
         stage('Deploy Movie Service to Prod') {
+            environment
+            {
+                KUBECONFIG = credentials("config") // we retrieve  kubeconfig from secret file called config saved on jenkins
+            }
             steps {
             // Create an Approval Button with a timeout of 15minutes.
             // this require a manuel validation in order to deploy on production environment
@@ -294,6 +370,10 @@ stages {
                 dir('movie-service-rep') {
                     // Copie des valeurs et mise à jour du tag Docker
                     sh '''
+                    rm -Rf .kube
+                    mkdir .kube
+                    ls
+                    cat $KUBECONFIG > .kube/config
                     cp ./movie-service/values.yaml values.yml
                     cat values.yml
                     sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
@@ -304,6 +384,10 @@ stages {
         }
 
         stage('Deploy Cast Service to Prod') {
+            environment
+            {
+                KUBECONFIG = credentials("config") // we retrieve  kubeconfig from secret file called config saved on jenkins
+            }
             steps {
             // Create an Approval Button with a timeout of 15minutes.
             // this require a manuel validation in order to deploy on production environment
@@ -314,6 +398,10 @@ stages {
                 dir('cast-service-rep') {
                     // Copie des valeurs et mise à jour du tag Docker
                     sh '''
+                    rm -Rf .kube
+                    mkdir .kube
+                    ls
+                    cat $KUBECONFIG > .kube/config
                     cp ./cast-service/values.yaml values.yml
                     cat values.yml
                     sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
@@ -324,6 +412,10 @@ stages {
         }
 
         stage('Deploy nginx to Prod') {
+            environment
+            {
+                KUBECONFIG = credentials("config") // we retrieve  kubeconfig from secret file called config saved on jenkins
+            }
             steps {
             // Create an Approval Button with a timeout of 15minutes.
             // this require a manuel validation in order to deploy on production environment
@@ -333,6 +425,10 @@ stages {
 
                 script {
                     sh '''
+                    rm -Rf .kube
+                    mkdir .kube
+                    ls
+                    cat $KUBECONFIG > .kube/config
                     helm upgrade --install nginx ./nginx --values ./nginx/values.yaml --namespace prod
                     '''
                 }
